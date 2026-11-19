@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>kapil_iq_test</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="kapil_iq_test">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: exam-booklet on graph paper — one centred column, one screen at a time (start → question → result) */
+:root{
+  --paper:#f3f5f9; --grid:#dfe5ef; --ink:#14213d; --muted:#5b6782;
+  --card:#ffffff; --line:#ccd5e3; --pencil:#f2a900; --pencil-ink:#3a2a00;
+  --good:#1f8a5b; --bad:#c2410c;
+  --display:"Bricolage Grotesque",ui-rounded,system-ui,sans-serif;
+  --body:"Inter",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0e1424; --grid:#18213a; --ink:#e7ecf6; --muted:#97a3bf;
+  --card:#151d33; --line:#2a3655; --pencil:#ffc23d; --pencil-ink:#2a1e00;
+  --good:#4cc38a; --bad:#ff8a5c; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#0e1424; --grid:#18213a; --ink:#e7ecf6; --muted:#97a3bf;
+  --card:#151d33; --line:#2a3655; --pencil:#ffc23d; --pencil-ink:#2a1e00;
+  --good:#4cc38a; --bad:#ff8a5c; color-scheme:dark }
+html,body{min-height:100%}
+body{
+  background:var(--paper); color:var(--ink); font-family:var(--body); font-size:16px; line-height:1.5;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:20px 32px; -webkit-tap-highlight-color:transparent;
+}
+.app{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+h1,h2{font-family:var(--display);font-weight:800;letter-spacing:-.02em;text-wrap:balance;margin:0}
+h1{font-size:2.6rem;line-height:1}
+h2{font-size:1.45rem;line-height:1.2}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.sheet{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:22px 20px;display:flex;flex-direction:column;gap:18px}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.fact{border:1px dashed var(--line);border-radius:10px;padding:10px;text-align:center}
+.fact b{display:block;font-family:var(--mono);font-size:1.35rem}
+.fact span{font-size:.78rem;color:var(--muted)}
+button{font:inherit;cursor:pointer;color:inherit}
+.primary{background:var(--pencil);color:var(--pencil-ink);border:0;border-radius:12px;padding:16px;font-weight:600;font-size:1.05rem;width:100%}
+.ghost{background:transparent;border:1.5px solid var(--line);border-radius:12px;padding:14px;width:100%;font-weight:500}
+button:focus-visible{outline:3px solid var(--pencil);outline-offset:2px}
+.topbar{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:.9rem}
+.timer.low{color:var(--bad)}
+.bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--pencil);transition:width .3s}
+.options{display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:center;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px}
+.opt .k{font-family:var(--mono);font-weight:700;width:28px;height:28px;flex:none;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:.8rem}
+.opt.sel{border-color:var(--pencil)}
+.opt.sel .k{background:var(--pencil);border-color:var(--pencil);color:var(--pencil-ink)}
+.q-num{font-family:var(--mono);color:var(--muted);font-size:.85rem}
+.score{display:flex;align-items:baseline;gap:10px}
+.score b{font-family:var(--display);font-size:4.5rem;line-height:1}
+.band{display:inline-block;padding:4px 10px;border-radius:999px;background:var(--pencil);color:var(--pencil-ink);font-weight:600;font-size:.85rem}
+.review{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.review li{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:.88rem;padding-block:8px;border-top:1px solid var(--line)}
+.review .ok{color:var(--good);font-weight:700}
+.review .no{color:var(--bad);font-weight:700}
+.review small{color:var(--muted);display:block}
+.note{font-size:.78rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#14213d">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-512.png">
+<link rel="manifest" href="manifest.json">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+const QUESTIONS = [
+  {q:"What comes next? 1, 4, 9, 16, 25, ?", o:["30","34","36","49"], a:2, why:"Square numbers: 6 × 6 = 36."},
+  {q:"What comes next? 1, 1, 2, 3, 5, 8, ?", o:["11","13","12","16"], a:1, why:"Each number is the sum of the two before it: 5 + 8."},
+  {q:"What comes next? 3, 5, 9, 17, 33, ?", o:["49","64","65","66"], a:2, why:"The gaps double: +2, +4, +8, +16, +32."},
+  {q:"What comes next? 8, 6, 7, 5, 6, 4, ?", o:["2","3","5","6"], a:2, why:"The pattern is −2, +1 repeating."},
+  {q:"What comes next? A, C, F, J, O, ?", o:["T","U","V","S"], a:1, why:"Skip 1, 2, 3, 4, then 5 letters: O + 6 = U."},
+  {q:"Book is to Reading as Fork is to …", o:["Drawing","Writing","Eating","Stirring"], a:2, why:"You read a book and eat with a fork."},
+  {q:"Rearrange the letters CIFAIPC. You get the name of a(n) …", o:["City","Animal","Ocean","Country"], a:2, why:"CIFAIPC → PACIFIC."},
+  {q:"All Bloops are Razzies. All Razzies are Lazzies. Are all Bloops definitely Lazzies?", o:["Yes","No","Can't tell","Only some"], a:0, why:"If every Bloop is a Razzie and every Razzie is a Lazzie, every Bloop is a Lazzie."},
+  {q:"A bat and a ball cost ₹110 together. The bat costs ₹100 more than the ball. How much is the ball?", o:["₹10","₹5","₹1","₹15"], a:1, why:"Ball ₹5 + bat ₹105 = ₹110."},
+  {q:"Mary's father has five daughters: Nana, Nene, Nini, Nono. What is the fifth daughter's name?", o:["Nunu","Nina","Mary","Nanu"], a:2, why:"The question already says Mary is one of his daughters."},
+  {q:"5 machines take 5 minutes to make 5 widgets. How long would 100 machines take to make 100 widgets?", o:["100 minutes","20 minutes","1 minute","5 minutes"], a:3, why:"Each machine makes one widget in 5 minutes."},
+  {q:"A patch of lily pads doubles in size every day. It covers the lake in 48 days. On which day did it cover half the lake?", o:["Day 24","Day 47","Day 46","Day 36"], a:1, why:"It doubles on the last day, so it was half on day 47."},
+  {q:"Which number does not belong? 2, 3, 6, 7, 8, 14, 15, 30", o:["6","8","14","15"], a:1, why:"The pattern is +1, ×2 repeating: 2, 3, 6, 7, 14, 15, 30. The 8 breaks it."},
+  {q:"A clock shows 3:15. What is the angle between the hour and minute hands?", o:["0°","7.5°","15°","30°"], a:1, why:"The hour hand has moved a quarter of the way to 4: ¼ × 30° = 7.5°."},
+  {q:"You slice one corner off a solid cube with a single flat cut. How many faces does the shape have now?", o:["6","7","8","9"], a:1, why:"The six original faces remain, and the cut adds one new triangular face."}
+];
+const TIME_LIMIT = 10 * 60;
+const KEYS = ["A","B","C","D"];
+const app = document.getElementById("app");
+let state = {i:0, answers:[], left:TIME_LIMIT, timer:null};
+
+function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+function fmt(s){return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function iqFor(correct){return Math.round(70 + correct * (75 / QUESTIONS.length))}
+function bandFor(iq){
+  if(iq>=130) return "Very superior";
+  if(iq>=120) return "Superior";
+  if(iq>=110) return "High average";
+  if(iq>=90) return "Average";
+  return "Below average";
+}
+
+function start(){
+  state = {i:0, answers:[], left:TIME_LIMIT, timer:null};
+  state.timer = setInterval(()=>{
+    state.left--;
+    const t = document.getElementById("timer");
+    if(t){t.textContent = fmt(state.left); t.classList.toggle("low", state.left<=60)}
+    if(state.left<=0) finish();
+  },1000);
+  renderQuestion();
+}
+
+function renderHome(){
+  const best = store("kapil_iq_best");
+  app.innerHTML = `
+    <div class="eyebrow">kapil_iq_test</div>
+    <h1>How sharp is your mind today?</h1>
+    <section class="sheet">
+      <div class="facts">
+        <div class="fact"><b>${QUESTIONS.length}</b><span>questions</span></div>
+        <div class="fact"><b>10</b><span>minutes</span></div>
+        <div class="fact"><b>${best ?? "—"}</b><span>best IQ</span></div>
+      </div>
+      <p>Number series, word logic and puzzles. Tap an answer to move on. Questions you don't reach count as wrong.</p>
+      <button class="primary" id="go">Start test</button>
+    </section>
+    <p class="note">A fun brain-teaser, not a clinical IQ assessment.</p>`;
+  document.getElementById("go").onclick = start;
+}
+
+function renderQuestion(){
+  const q = QUESTIONS[state.i];
+  app.innerHTML = `
+    <div class="topbar"><span>Q ${state.i+1} / ${QUESTIONS.length}</span><span class="timer${state.left<=60?" low":""}" id="timer">${fmt(state.left)}</span></div>
+    <div class="bar"><i style="width:${state.i/QUESTIONS.length*100}%"></i></div>
+    <section class="sheet">
+      <div class="q-num">Question ${state.i+1}</div>
+      <h2>${q.q}</h2>
+      <div class="options">${q.o.map((t,k)=>`<button class="opt" id="opt${k}" data-k="${k}"><span class="k">${KEYS[k]}</span><span>${t}</span></button>`).join("")}</div>
+    </section>
+    <button class="ghost" id="quit">Quit test</button>`;
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    if(app.dataset.lock) return;
+    app.dataset.lock = "1";
+    b.classList.add("sel");
+    state.answers[state.i] = +b.dataset.k;
+    setTimeout(()=>{
+      delete app.dataset.lock;
+      state.i++;
+      state.i < QUESTIONS.length ? renderQuestion() : finish();
+    },280);
+  });
+  document.getElementById("quit").onclick = ()=>{clearInterval(state.timer); renderHome()};
+}
+
+function finish(){
+  clearInterval(state.timer);
+  const correct = QUESTIONS.reduce((n,q,i)=>n+(state.answers[i]===q.a?1:0),0);
+  const iq = iqFor(correct);
+  const best = +(store("kapil_iq_best")||0);
+  if(iq>best) store("kapil_iq_best", String(iq));
+  const used = TIME_LIMIT - Math.max(state.left,0);
+  app.innerHTML = `
+    <div class="eyebrow">Your result</div>
+    <section class="sheet">
+      <div class="score"><b>${iq}</b><span class="eyebrow">est. IQ</span></div>
+      <div><span class="band">${bandFor(iq)}</span></div>
+      <p>${correct} of ${QUESTIONS.length} correct in ${fmt(used)}.${iq>best&&best?" New personal best.":""}</p>
+      <button class="primary" id="again">Take it again</button>
+    </section>
+    <section class="sheet">
+      <h2>Answers</h2>
+      <ul class="review">${QUESTIONS.map((q,i)=>{
+        const ok = state.answers[i]===q.a;
+        const yours = state.answers[i]===undefined ? "not answered" : q.o[state.answers[i]];
+        return `<li><span class="${ok?"ok":"no"}">${ok?"✓":"✕"}</span><div>${q.q}<small>Answer: ${q.o[q.a]}${ok?"":` · yours: ${yours}`}. ${q.why}</small></div></li>`;
+      }).join("")}</ul>
+    </section>
+    <p class="note">Score maps ${QUESTIONS.length} questions onto a 70–145 scale. For fun only.</p>`;
+  document.getElementById("again").onclick = start;
+  window.scrollTo(0,0);
+}
+
+renderHome();
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+</script>
+
+</body>
+</html>
